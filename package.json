@@ -1,0 +1,36 @@
+{
+  "name": "igniteVM",
+  "version": "1.0.0",
+  "description": "sandboxing-infrasture",
+  "keywords": [
+    "sandboxing",
+    "firecracker",
+    "VMs"
+  ],
+  "homepage": "https://github.com/TusharThakur04/IgniteVM#readme",
+  "bugs": {
+    "url": "https://github.com/TusharThakur04/IgniteVM/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TusharThakur04/IgniteVM.git"
+  },
+  "license": "ISC",
+  "author": "Tushar",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@eslint/css": "^2.0.0",
+    "@eslint/js": "^9.39.5",
+    "@types/node": "^22.20.2",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^17.12.0",
+    "jiti": "^2.7.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.70.0"
+  }
+}
