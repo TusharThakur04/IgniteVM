@@ -1,7 +1,7 @@
 import path from "node:path";
 import os from "node:os";
-import { FirecrackerClient } from "./firecracker/client.ts";
-import { spawnFirecracker, waitForSocket } from "./firecracker/process.ts";
+import { FirecrackerClient } from "./firecracker/client.js";
+import { spawnFirecracker, waitForSocket } from "./firecracker/process.js";
 
 async function main(): Promise<void> {
   const socketPath = "/tmp/firecracker.socket";

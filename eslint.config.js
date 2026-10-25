@@ -36,7 +36,7 @@ export default defineConfig([
 
   {
     files: ["apps/frontend/**/*.{jsx,tsx}"],
-    extends: [pluginReact.configs.flat.recommended!],
+    extends: [pluginReact.configs.flat.recommended],
     languageOptions: {
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
