@@ -1,3 +1,7 @@
 /node_modules
 /dist
 /envd
+# IgniteVM Binaries & Disk Images
+src/envd/envd
+src/envd/rootfs.ext4
+src/envd/rootfs.tar

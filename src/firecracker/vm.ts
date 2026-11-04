@@ -78,6 +78,7 @@ export class VM {
         "panic=1",
         "pci=off",
         `ip=${guestIp}::${hostIp}:255.255.255.0::eth0:off`,
+        "init=/init.sh",
       ].join(" ");
 
       await client.setBootSource({
