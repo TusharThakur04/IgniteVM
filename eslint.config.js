@@ -31,6 +31,15 @@ export default defineConfig([
       "@typescript-eslint/no-floating-promises": "error",
       "@typescript-eslint/no-unused-vars": "error",
       "consistent-return": "error",
+      "@typescript-eslint/no-misused-promises": [
+        "error",
+        {
+          checksVoidReturn: {
+            attributes: false, // Allows async functions in JSX props like onClick={async () => {}}
+            properties: false, // Allows async functions in object properties / event listeners
+          },
+        },
+      ],
     },
   },
 

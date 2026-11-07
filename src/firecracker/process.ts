@@ -1,10 +1,12 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import net from "node:net";
 import fs from "node:fs/promises";
+import type { WriteStream } from "node:fs";
 
 export interface SpawnFirecrackerOptions {
   socketPath: string;
   binaryPath: string;
+  logStream: WriteStream;
 }
 
 /**
@@ -19,8 +21,11 @@ export async function spawnFirecracker(
   await fs.rm(socketPath, { force: true });
 
   const child = spawn(binaryPath, ["--api-sock", socketPath], {
-    stdio: ["ignore", "inherit", "inherit"],
+    stdio: ["ignore", "pipe", "pipe"],
   });
+
+  child.stdout.pipe(options.logStream);
+  child.stderr.pipe(options.logStream);
 
   return child;
 }

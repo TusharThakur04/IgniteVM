@@ -3,6 +3,7 @@ import { promisify } from "node:util";
 import fs from "node:fs/promises";
 import { FirecrackerClient } from "./client.js";
 import { spawnFirecracker, waitForSocket } from "./process.js";
+import type { WriteStream } from "node:fs";
 
 const execFile = promisify(execFileCb);
 
@@ -11,6 +12,7 @@ export interface VMOptions {
   binaryPath: string;
   kernelPath: string;
   baseRootfsPath: string;
+  logStream: WriteStream;
   hostIp?: string;
   guestIp?: string;
   vcpuCount?: number;
@@ -22,20 +24,22 @@ export class VM {
   public readonly tapName: string;
   public readonly socketPath: string;
   public readonly rootfsPath: string;
+  public readonly guestIp: string;
+
   private process: ChildProcess | null = null;
   private isClosed = false;
 
-  private constructor(id: string) {
+  private constructor({ id, guestIp }: VMOptions) {
     this.id = id;
     this.tapName = `tap-${id}`;
     this.socketPath = `/tmp/fc-${id}.socket`;
     this.rootfsPath = `/tmp/fc-${id}-rootfs.ext4`;
+    this.guestIp = guestIp ?? "172.16.0.2";
   }
 
   public static async create(opts: VMOptions): Promise<VM> {
-    const vm = new VM(opts.id);
+    const vm = new VM(opts);
     const hostIp = opts.hostIp ?? "172.16.0.1";
-    const guestIp = opts.guestIp ?? "172.16.0.2";
 
     try {
       // 1. Create a per-VM copy of the rootfs
@@ -66,6 +70,7 @@ export class VM {
       vm.process = await spawnFirecracker({
         socketPath: vm.socketPath,
         binaryPath: opts.binaryPath,
+        logStream: opts.logStream,
       });
       await waitForSocket(vm.socketPath, 5000);
 
@@ -77,7 +82,7 @@ export class VM {
         "reboot=k",
         "panic=1",
         "pci=off",
-        `ip=${guestIp}::${hostIp}:255.255.255.0::eth0:off`,
+        `ip=${vm.guestIp}::${hostIp}:255.255.255.0::eth0:off`,
         "init=/init.sh",
       ].join(" ");
 
