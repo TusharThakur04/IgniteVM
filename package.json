@@ -20,10 +20,15 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "build:agent": "bun build ./src/envd/index.ts --compile --outfile ./src/envd/envd",
+    "build:rootfs": "npm run build:agent && ./src/envd/build-image.sh",
+    "setup:network": "./src/scripts/network-setup.sh",
+    "clean:network": "./src/scripts/network-cleanup.sh",
+    "clean:sockets": "rm -f /tmp/fc-vm-*.socket",
+    "clean:all": "npm run clean:sockets && npm run clean:network"
   },
   "devDependencies": {
     "@eslint/css": "^2.0.0",
