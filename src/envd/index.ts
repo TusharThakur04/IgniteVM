@@ -75,6 +75,9 @@ const server = http.createServer((req, res) => {
                 stderr += "\nExecution timed out.";
                 finalExitCode = 124;
               }
+              console.log(
+                `[envd] Execution complete. Exit code: ${finalExitCode}, stdout length: ${stdout.length} bytes`,
+              );
 
               res.writeHead(200, { "Content-Type": "application/json" });
               res.end(

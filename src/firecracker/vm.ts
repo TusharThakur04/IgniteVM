@@ -45,7 +45,7 @@ export class VM {
       // 1. Create a per-VM copy of the rootfs
       await fs.copyFile(opts.baseRootfsPath, vm.rootfsPath);
 
-      // 2. Setup TAP device (delete first if a stale one exists)
+      // 2. Setup TAP device and attach it to the master bridge
       await vm.deleteTapDevice().catch(() => undefined);
       await execFile("sudo", [
         "ip",
@@ -56,13 +56,15 @@ export class VM {
         "mode",
         "tap",
       ]);
+      // Attach to bridge
       await execFile("sudo", [
         "ip",
-        "addr",
-        "add",
-        `${hostIp}/24`,
+        "link",
+        "set",
         "dev",
         vm.tapName,
+        "master",
+        "vm-bridge",
       ]);
       await execFile("sudo", ["ip", "link", "set", "dev", vm.tapName, "up"]);
 
@@ -103,10 +105,14 @@ export class VM {
         mem_size_mib: opts.memSizeMib ?? 512,
       });
 
+      // Convert the numeric ID (e.g., 254) to a 2-character hex string (e.g., "fe")
+      const idNum = parseInt(opts.id.replace("vm-", ""), 10);
+      const hexId = idNum.toString(16).padStart(2, "0");
+
       await client.setNetworkInterface({
         iface_id: "eth0",
         host_dev_name: vm.tapName,
-        guest_mac: "AA:FC:00:00:00:01",
+        guest_mac: `AA:FC:00:00:00:${hexId}`, // Ensures every VM gets a unique MAC
       });
 
       await client.startInstance();
